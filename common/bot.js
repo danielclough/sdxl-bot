@@ -6,7 +6,7 @@ const __filename = fileURLToPath(import.meta.url)
 export const __dirname = path.dirname(__filename)
 
 const channelCheck = (message, channel) => {
-  if (!channel) channel = message.client.channels.cache.get(guild.botRoom)
+  if (!channel) channel = message.client.channels.cache.get(guild.bot_room)
   if (message.channel !== channel) {
     message.delete()
   }
@@ -14,11 +14,22 @@ const channelCheck = (message, channel) => {
 }
 
 const parseTime = time => {
-  let minutes = parseInt(time / 60)
-  let seconds = time % 60
-  return seconds !== 0
-    ? `${minutes} minutes and ${seconds} seconds`
-    : `${minutes} minutes`
+  let timeStr = ''
+  let hours = parseInt(time / (60 * 60))
+  
+  if (hours > 0) {
+    let minutes = parseInt(time % 60)
+    if (minutes !== 0) {
+      timeStr = `${hours} hours ${minutes} minutes`
+    } else timeStr = `${hours} hours` 
+  } else {
+    let minutes = parseInt(time / 60)
+    let seconds = time % 60
+    if (seconds !== 0) {
+      timeStr = `${minutes} minutes and ${seconds} seconds`
+    } timeStr = `${minutes} minutes`
+  }
+  return timeStr
 }
 
 export const warnRemoveSend = (content, message, channel, waitToDelete) => {

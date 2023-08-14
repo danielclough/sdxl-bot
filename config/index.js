@@ -7,10 +7,7 @@ export const bot = {
   watching: process.env.BOT_COMMAND_PREFIX + 'help for bot commands!',
 }
 export const guild = {
-  name: process.env.GUILD_NAME,
-  id: process.env.GUILD_ID,
-  inviteCode: process.env.INVITE_CODE,
-  botRoom: process.env.GUILD_BOT_ROOM,
+  bot_room: process.env.GUILD_BOT_ROOM,
   restricted_role: process.env.GUILD_RESTRICTED_ROLE,
 }
 export const developer = {

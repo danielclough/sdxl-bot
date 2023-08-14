@@ -9,7 +9,7 @@ export default {
   optionalArgs: '[command name]',
   cooldown: 5,
   execute(message, args, client) {
-    const botRoom = client.channels.cache.get(guild.botRoom)
+    const botRoom = client.channels.cache.get(guild.bot_room)
     const { commands } = message.client
 
     let commandClassList = commands.map(command => command.command_class)

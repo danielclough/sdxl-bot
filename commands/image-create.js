@@ -1,11 +1,19 @@
+import { warnRemoveSend } from '../common/bot.js'
+import { bot } from '../config/index.js'
 import { exec } from 'child_process'
+
+// Bot Channel
+let botRoom = bot.bot_room
+
+// Leave message in room for n seconds (60 min * 60 seconds * 48hrs)
+let waitToDelete = 60 * 60 * 48
 
 export default {
   name: 'sdxl',
   command_class: 'Community',
   description: 'Create image with SDXL.',
-  // Allow quick use with `!! prompt text`
-  aliases: ['!'],
+  // Allow quick use with by typing command_prefix twice followed by the image prompt.
+  aliases: [bot.command_prefix],
   // Args are required
   args: '<prompt text>',
   guildOnly: true,
@@ -34,17 +42,20 @@ export default {
     // Wait for code to exit
     child.on('exit', () => {
       // Send image for each seed
+      let files = []
       for (let seed of seeds) {
         let image = `${seed}.png`
-        message.channel.send({
-          files: [
-            {
-              attachment: `images/${image}`,
-              name: image,
-            },
-          ],
-        })
+          files.push({
+            attachment: `images/${image}`,
+            name: image,
+          })
       }
+      warnRemoveSend(
+        {files},
+        message,
+        botRoom,
+        waitToDelete
+      )
     })
   },
 }
