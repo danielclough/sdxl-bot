@@ -54,6 +54,14 @@ CUDA allows ML computation on Nvidia GPUs.
 
 [Install CUDA and Toolkit](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html).
 
+Cuda:
+
+`nvidia-smi`
+
+Cuda Toolkit:
+
+`dpkg -l | grep cuda-toolkit`
+
 ### Setup
 
 ```sh
@@ -100,6 +108,18 @@ exit
 
 `lxc exec sdxl --user 1000 -- bash -c "cd /sdxl && /.nvm/versions/node/v18.17.1/bin/node /sdxl/index.js"`
 
+### Bonus (Backup with Rsync)
+
+Configure `yourBackupLocation` in `~/.ssh/config`
+
+```sh
+Host yourBackupLocation
+  HostName <yourdomain.tld OR ip (e.g. 8.8.8.8)>
+  User username
+  IdentityFile ~/.ssh/id_ed25519
+```
+
+`rsync -avh images yourBackupLocation:/public/`
 
 ## Learn More (Everyday)
 
