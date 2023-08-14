@@ -1,0 +1,31 @@
+{
+  "name": "sdxl-bot",
+  "version": "0.1.0",
+  "description": "Simple Stable Diffusion XL Bot for Discord.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm dlx nodemon index.js",
+    "lint": "eslint --ext .js .",
+    "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|json)\""
+  },
+  "keywords": [
+    "discordjs",
+    "stable diffusion",
+    "sdxl",
+    "machine learning",
+    "artificial intelligence"
+  ],
+  "author": "DanielC.us",
+  "license": "AGPLv3",
+  "dependencies": {
+    "discord.js": "^14.12.1",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.46.0",
+    "eslint-config-prettier": "^9.0.0",
+    "nodemon": "^3.0.1",
+    "prettier": "^3.0.1"
+  }
+}
