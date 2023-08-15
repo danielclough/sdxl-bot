@@ -71,7 +71,7 @@ Fill in the rest of the environment variables.
 
 ### Invite Bot to Server (Browser)
 
-https://discord.com/api/oauth2/authorize?client_id=CLIENT_ID&permissions=8&scope=bot%20applications.commands
+`https://discord.com/api/oauth2/authorize?client_id=CLIENT_ID&permissions=8&scope=bot%20applications.commands`
 
 
 ## Linux Containers (LXC) for Security
@@ -100,7 +100,7 @@ lxc exec sdxl -- /root/bandwidthTest
 
 # share dir
 lxc config device add sdxl disk disk \
-    path=/sdxl source=/home/$USER/git/sdxl-bot
+    path=/sdxl source=$GIT_HOME/sdxl-bot
 
 # Change Ownership to share files between Host and LXC
 # 1001000 for LXD installed w/ snap - 101000 for LXD installed w/ apt 
