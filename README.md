@@ -24,25 +24,6 @@ Check if Cuda Toolkit is installed:
 
 `dpkg -l | grep cuda-toolkit`
 
-## Create Discord App and Bot
-
-### Discord Developer (Website)
-
-Goto [https://discord.com/developers/applications](https://discord.com/developers/applications)
-Click `New Application` (top right corner)
-Create Bot
-
-### ENV (local)
-
-Copy `example.env` to `.env`
-Copy `TOKEN` from Discord Developer into `.env`
-
-Fill in the rest of the environment variables.
-
-### Invite Bot to Server (Browser)
-
-https://discord.com/api/oauth2/authorize?client_id=CLIENT_ID&permissions=8&scope=bot%20applications.commands
-
 ## Clone Repos (local)
 
 ```sh
@@ -70,12 +51,35 @@ git clone https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0
 git clone https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0
 ```
 
+## Create Discord App and Bot
+
+### Discord Developer (Website)
+
+Goto [https://discord.com/developers/applications](https://discord.com/developers/applications)
+
+Click `New Application` (top right corner)
+
+Create Bot
+
+### ENV (local)
+
+Copy `example.env` to `.env`
+
+Copy `TOKEN` from Discord Developer into `.env`
+
+Fill in the rest of the environment variables.
+
+### Invite Bot to Server (Browser)
+
+https://discord.com/api/oauth2/authorize?client_id=CLIENT_ID&permissions=8&scope=bot%20applications.commands
+
+
 ## Linux Containers (LXC) for Security
+
+>Read about the difference between LXC and Docker Security [here](https://earthly.dev/blog/lxc-vs-docker/#security).
 
 > **You can skip this part if you are not worried about Malware in custom models.**
 > Safetensor files have no "High Severity" issues and should always be preferred over pickle files. ([citation](https://huggingface.co/blog/safetensors-security-audit))
-
-Read about the difference between LXC and Docker Security [here](https://earthly.dev/blog/lxc-vs-docker/#security).
 
 ### Setup
 
@@ -113,18 +117,22 @@ sudo apt install -y python3-pip python-is-python3
 pip install diffusers torch transformers accelerate
 
 # Install Javascript Dependencies
-# Check NVM Release and adjust if needed: https://github.com/nvm-sh/nvm/releases
-sudo mkdir /.nvm && sudo chown 1000:1000 /.nvm
-wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
 
+# Export HOME as ~ for script
 cat << EOF >> ~/.bashrc
-export NVM_DIR="/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+export HOME=~
 EOF
 
+# Check NVM Release and adjust if needed: https://github.com/nvm-sh/nvm/releases
+wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
+
+# source instead of logout
 source ~/.bashrc
+
+# install and use 18
 nvm install 18 && nvm use 18
 
+# install package.json and node_modules
 npm i
 
 exit
