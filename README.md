@@ -2,9 +2,14 @@
 
 ## Prerequisites
 
-### LXD / LXC
+### LXD / LXC for Security
 
-LXD is the app which controls LXC.
+>Read about the difference between LXC and Docker Security [here](https://earthly.dev/blog/lxc-vs-docker/#security).
+
+> **You can skip this part if you are not worried about Malware in custom models.**
+> Safetensor files have no "High Severity" issues and should always be preferred over pickle files. ([citation](https://huggingface.co/blog/safetensors-security-audit))
+
+> LXD is the app which controls LXC.
 
 [Install LXD](https://ubuntu.com/lxd/install)
 
@@ -74,14 +79,7 @@ Fill in the rest of the environment variables.
 `https://discord.com/api/oauth2/authorize?client_id=CLIENT_ID&permissions=8&scope=bot%20applications.commands`
 
 
-## Linux Containers (LXC) for Security
-
->Read about the difference between LXC and Docker Security [here](https://earthly.dev/blog/lxc-vs-docker/#security).
-
-> **You can skip this part if you are not worried about Malware in custom models.**
-> Safetensor files have no "High Severity" issues and should always be preferred over pickle files. ([citation](https://huggingface.co/blog/safetensors-security-audit))
-
-### Setup
+## Linux Containers (LXC) Setup
 
 ```sh
 # Cuda-12.x and Toolkit must be installed on host!
