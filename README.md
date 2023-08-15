@@ -2,15 +2,21 @@
 
 ## Prerequisites
 
+### LXD / LXC
+
 LXD is the app which controls LXC.
 
 [Install LXD](https://ubuntu.com/lxd/install)
 
-CUDA allows ML computation on Nvidia GPUs.
+`lxc --version`
 
-[Install CUDA and Toolkit](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html).
+### Cuda + Cuda Toolkit
 
-Check if CUDA works:
+Cuda allows ML computation on Nvidia GPUs.
+
+[Install Cuda and Toolkit](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html).
+
+Check if Cuda works:
 
 `nvidia-smi`
 
@@ -74,7 +80,7 @@ Read about the difference between LXC and Docker Security [here](https://earthly
 ### Setup
 
 ```sh
-# CUDA-12.x and Toolkit must be installed on host!
+# Cuda-12.x and Toolkit must be installed on host!
 lxc launch ubuntu:22.04 sdxl -c nvidia.runtime=true
 lxc config device add sdxl gpu gpu
 
@@ -84,7 +90,7 @@ lxc config device set sdxl gpu gid 1000
 # confirm nvidia-smi is working
 lxc exec sdxl -- nvidia-smi
 
-# confirm CUDA is working
+# confirm Cuda is working
 lxc file push /usr/local/cuda-12.1/extras/demo_suite/bandwidthTest sdxl/root/
 lxc exec sdxl -- /root/bandwidthTest
 
