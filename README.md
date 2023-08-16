@@ -121,10 +121,13 @@ cat << EOF >> ~/.bashrc
 export HOME=~
 EOF
 
+# source changes to .bashrc
+source ~/.bashrc
+
 # Check NVM Release and adjust if needed: https://github.com/nvm-sh/nvm/releases
 wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
 
-# source instead of logout
+# source changes to .bashrc
 source ~/.bashrc
 
 # install and use 18
