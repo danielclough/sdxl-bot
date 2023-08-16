@@ -142,7 +142,7 @@ exit
 ### Start Bot!
 
 ```sh
-lxc exec sdxl --user 1000 -- bash -c "cd /sdxl && /.nvm/versions/node/v18.17.1/bin/node /sdxl/index.js"
+lxc exec sdxl --user 1000 -- bash -c "cd /sdxl && /home/ubuntu/.nvm/versions/node/v18.17.1/bin/node /sdxl/index.js"
 ```
 
 ### Bonus (Backup with Rsync)
