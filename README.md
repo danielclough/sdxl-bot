@@ -66,6 +66,10 @@ Click `New Application` (top right corner)
 
 Create Bot
 
+### Invite Bot to Server (Browser)
+
+`https://discord.com/api/oauth2/authorize?client_id=CLIENT_ID&permissions=8&scope=bot%20applications.commands`
+
 ### ENV (local)
 
 Copy `example.env` to `.env`
@@ -73,10 +77,6 @@ Copy `example.env` to `.env`
 Copy `TOKEN` from Discord Developer into `.env`
 
 Fill in the rest of the environment variables.
-
-### Invite Bot to Server (Browser)
-
-`https://discord.com/api/oauth2/authorize?client_id=CLIENT_ID&permissions=8&scope=bot%20applications.commands`
 
 
 ## Linux Containers (LXC) Setup
