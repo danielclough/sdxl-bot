@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  sdxl:
+    command: /usr/local/bin/node /app/index.js
+    build: .
+    env_file:
+      - .env
+    volumes:
+      - ./images:/app/images
+      - ./models:/app/models
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]

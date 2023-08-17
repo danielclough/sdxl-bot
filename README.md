@@ -2,24 +2,34 @@
 
 ## Prerequisites
 
-### LXD / LXC for Security
-
->Read about the difference between LXC and Docker Security [here](https://earthly.dev/blog/lxc-vs-docker/#security).
-
-> **You can skip this part if you are not worried about Malware in custom models.**
-> Safetensor files have no "High Severity" issues and should always be preferred over pickle files. ([citation](https://huggingface.co/blog/safetensors-security-audit))
-
-> LXD is the app which controls LXC.
-
-[Install LXD](https://ubuntu.com/lxd/install)
-
-`lxc --version`
-
 ### Cuda + Cuda Toolkit
 
 Cuda allows ML computation on Nvidia GPUs.
 
 [Install Cuda and Toolkit](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html).
+
+<details>
+
+<summary>Example Install on Ubuntu 22.04</summary>
+
+The following comes from from [this link](https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&Distribution=Ubuntu&target_version=22.04&target_type=deb_local).
+
+```sh
+wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-ubuntu2204.pin
+sudo mv cuda-ubuntu2204.pin /etc/apt/preferences.d/cuda-repository-pin-600
+wget https://developer.download.nvidia.com/compute/cuda/12.2.1/local_installers/cuda-repo-ubuntu2204-12-2-local_12.2.1-535.86.10-1_amd64.deb
+
+# This code not included in link above! 
+# It checks the md5sum of .deb file against record on website.
+[ $(echo `curl https://developer.download.nvidia.com/compute/cuda/12.2.1/docs/sidebar/md5sum.txt | grep cuda-repo-ubuntu2204-12-2-local_12.2.1-535.86.10-1_amd64.deb | cut -d " " -f 1`) = $(echo `md5sum cuda-repo-ubuntu2204-12-2-local_12.2.1-535.86.10-1_amd64.deb | cut -f1 -d " "`) ] \
+  && echo 'F#ck Yeah! MD5SUM Matches!' || echo 'F#ckd Up! MD5SUM not matching!'
+
+# cont. code from link above
+sudo dpkg -i cuda-repo-ubuntu2204-12-2-local_12.2.1-535.86.10-1_amd64.deb
+sudo cp /var/cuda-repo-ubuntu2204-12-2-local/cuda-*-keyring.gpg /usr/share/keyrings/
+sudo apt-get update
+sudo apt-get -y install cuda
+```
 
 Check if Cuda works:
 
@@ -28,6 +38,62 @@ Check if Cuda works:
 Check if Cuda Toolkit is installed:
 
 `dpkg -l | grep cuda-toolkit`
+
+</details>
+
+### LXC vs Docker
+
+> Read about the difference between LXC and Docker Security [here](https://earthly.dev/blog/lxc-vs-docker/#security).
+
+<details>
+
+<summary>Install Linux Containers</summary>
+
+#### LXD / LXC
+
+> LXD is the app which controls LXC.
+
+[Install LXD](https://ubuntu.com/lxd/install)
+
+`lxc --version`
+
+</details>
+
+<details>
+
+<summary>Install Docker</summary>
+
+#### Docker
+
+```sh
+# I was able to use Ubuntu's package, but you may need to add Docker's if you have a problem.
+sudo apt install docker
+#  Modify user group.
+sudo usermod -aG docker $USER
+```
+
+#### Nvidia Container Toolkit
+
+```sh
+distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
+      && curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
+      && curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | \
+            sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
+            sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+
+sudo apt-get update \
+    && sudo apt-get install -y nvidia-container-toolkit
+
+sudo nvidia-ctk runtime configure --runtime=docker
+
+sudo systemctl restart docker
+
+# test nvidia-smi in docker
+docker run --rm --runtime=nvidia --gpus all nvidia/cuda:12.2.0-base-ubuntu20.04 nvidia-smi
+```
+
+</details>
+
 
 ## Clone Repos (local)
 
@@ -78,8 +144,13 @@ Copy `TOKEN` from Discord Developer into `.env`
 
 Fill in the rest of the environment variables.
 
+### Setup and Run
 
-## Linux Containers (LXC) Setup
+<details>
+
+<summary>LXC</summary>
+
+#### Setup
 
 ```sh
 # Cuda-12.x and Toolkit must be installed on host!
@@ -93,7 +164,7 @@ lxc config device set sdxl gpu gid 1000
 lxc exec sdxl -- nvidia-smi
 
 # confirm Cuda is working
-lxc file push /usr/local/cuda-12.1/extras/demo_suite/bandwidthTest sdxl/root/
+lxc file push /usr/local/cuda-12.2/extras/demo_suite/bandwidthTest sdxl/root/
 lxc exec sdxl -- /root/bandwidthTest
 
 # share dir
@@ -101,7 +172,7 @@ lxc config device add sdxl disk disk \
     path=/sdxl source=$GIT_HOME/sdxl-bot
 
 # Change Ownership to share files between Host and LXC
-# 1001000 for LXD installed w/ snap - 101000 for LXD installed w/ apt 
+# 1001000 for LXD installed w/ snap - 101000 for LXD installed w/ apt
 sudo chown 1001000:1000 -R $GIT_HOME/sdxl-bot
 
 # Enter Container
@@ -139,14 +210,68 @@ npm i
 exit
 ```
 
-### Start Bot!
+#### Start Bot!
 
 ```sh
 lxc exec sdxl --user 1000 -- bash -c "cd /sdxl && /home/ubuntu/.nvm/versions/node/v18.17.1/bin/node /sdxl/index.js"
 ```
 
-### Bonus (Backup with Rsync)
+</details>
 
+
+<details>
+
+<summary>Docker</summary>
+
+#### Setup and Run!
+
+`docker-compose up`
+
+
+<details>
+
+<summary>Why is this image so F#king Big!?!</summary>
+
+In case you want to optimize more - here is some info to get you thinking about how to go about it.
+
+```sh
+# du -h --max-depth=1 / | grep G
+1.5G    /opt
+2.2G    /root
+9.8G    /usr
+14G     /
+```
+
+```sh
+# du -h --max-depth=1 /opt/nvidia/nsight-compute/ | grep G
+1.5G    /opt/nvidia/nsight-compute/2023.2.0
+1.5G    /opt/nvidia/nsight-compute/
+```
+
+```sh
+# du -h --max-depth=1 /root/.cache/pip | grep G
+2.2G    /root/.cache/pip/http
+2.2G    /root/.cache/pip
+```
+
+```sh
+# du -h --max-depth=1 /usr/local/ | grep G
+4.4G    /usr/local/lib
+4.4G    /usr/local/cuda-12.2
+8.9G    /usr/local/
+```
+
+```sh
+# du -h --max-depth=1 /usr/local/lib/ | grep G
+4.4G    /usr/local/lib/python3.11
+4.4G    /usr/local/lib/
+```
+</details>
+
+</details>
+
+
+### Bonus (Backup with Rsync)
 
 ```sh
 # Configure `backupLocation` by adding your Host in `~/.ssh/config`
@@ -163,10 +288,25 @@ sudo apt install rsync
 rsync -avh $GIT_HOME/sdxl-bot/images backupLocation:/some_dir/
 ```
 
+## Troubleshooting
+
+### Purge Docker
+
+LXC and Docker don't play well together...
+
+```sh
+sudo apt -y purge `echo $(dpkg -l | grep -i docker | tr -s " " | cut -f 2 -d " " | xargs)
+sudo apt autoremove
+sudo rm -fr /etc/docker
+```
+
 ## Learn More (Everyday)
+
+> **You can skip this part if you are not worried about Malware in custom models.**
+> Safetensor files have no "High Severity" issues and should always be preferred over pickle files. ([citation](https://huggingface.co/blog/safetensors-security-audit))
 
 [DiscordJS Guide](https://discordjs.guide/)
 
 ## Shout Out
 
-Thanks to the [Blackcoin Community](https://discord.blackcoin.nl) for helping to fund the GPU that I used for this project!
+Thanks to the [Blackcoin Community](https://discord.blackcoin.nl) for donating towards the GPU that I used for this project!
