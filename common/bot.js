@@ -1,9 +1,4 @@
 import { guild } from '../config/index.js'
-import path from 'path'
-import { fileURLToPath } from 'url'
-
-const __filename = fileURLToPath(import.meta.url)
-export const __dirname = path.dirname(__filename)
 
 const channelCheck = (message, channel) => {
   if (!channel) channel = message.client.channels.cache.get(guild.bot_room)
