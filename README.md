@@ -65,9 +65,27 @@ Check if Cuda Toolkit is installed:
 
 #### Docker
 
+[Install Docker](https://docs.docker.com/get-docker/)
+
+##### Example Install
+
 ```sh
-# I was able to use Ubuntu's package, but you may need to add Docker's if you have a problem.
-sudo apt install docker
+sudo apt update && sudo apt upgrade -y && sudo apt install -y  \
+    ca-certificates \
+    curl \
+    gnupg \
+    lsb-release
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg \
+    --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+# Install Docker repo
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+    $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Install Docker
+sudo apt update && sudo apt install -y docker-ce docker-ce-cli containerd.io
+
 #  Modify user group.
 sudo usermod -aG docker $USER
 ```
