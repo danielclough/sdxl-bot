@@ -1,4 +1,4 @@
-import { warnRemoveSend } from '../common/bot.js'
+import { warnRemoveSend, __dirname } from '../common/bot.js'
 import { bot } from '../config/index.js'
 import { exec } from 'child_process'
 
@@ -33,7 +33,7 @@ export default {
       `#${seeds}`
 
     // Child Process calls Python code to run SD model.
-    let child = exec(`/usr/bin/python commands/image-create.py ${content}`)
+    let child = exec(`/usr/bin/python ${__dirname}/commands/image-create.py ${content}`)
 
     // Pipe Python Errors and Console Logging to JS.
     child.stdout.pipe(process.stdout)
@@ -46,7 +46,7 @@ export default {
       for (let seed of seeds) {
         let image = `${seed}.png`
           files.push({
-            attachment: `images/${image}`,
+            attachment: `${__dirname}/images/${image}`,
             name: image,
           })
       }
