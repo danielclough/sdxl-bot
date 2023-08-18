@@ -1,5 +1,5 @@
 help:
-	@echo "Make Commands: \n  make clone\n  make lxc-init\n  make purge-docker"
+	@echo "Make Commands: \n  make clone\n  make lxc-build\n  make docker-build\n  make docker-purge"
 
 clone:
 	@sudo apt update && sudo apt upgrade -y
@@ -13,7 +13,7 @@ clone:
 		&& git clone https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0 \
 		&& git clone https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0
 
-lxc-init:
+lxc-build:
 	@lxc launch ubuntu:22.04 sdxl -c nvidia.runtime=true \
 		&& lxc config device add sdxl gpu gpu \
 		&& lxc config device set sdxl gpu uid 1000 \
@@ -32,8 +32,8 @@ lxc-init:
 	@lxc exec sdxl --user 1000 -- bash -c ". /home/ubuntu/.nvm/nvm.sh && cd /sdxl && npm i"
 	@echo -e "\n\nExecute:\nlxc exec sdxl --user 1000 -- bash -c \"cd /sdxl && /home/ubuntu/.nvm/versions/node/v18.17.1/bin/node /sdxl/index.js\"\n"
 
-docker:
-	@docker compose up -d
+docker-build:
+	@docker compose up -d --build
 
 docker-purge:
 	@sudo apt -y purge `echo $(dpkg -l | grep -i docker | tr -s " " | cut -f 2 -d " " | xargs)

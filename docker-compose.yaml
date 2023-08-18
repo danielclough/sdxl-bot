@@ -2,7 +2,7 @@ version: '3'
 
 services:
   sdxl:
-    command: /usr/local/bin/node /app/index.js
+    command: cd /app && /usr/local/bin/node /app/index.js
     build: .
     env_file:
       - .env
