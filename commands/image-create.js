@@ -1,6 +1,7 @@
-import { warnRemoveSend, __dirname } from '../common/bot.js'
+import { warnRemoveSend } from '../common/bot.js'
 import { bot } from '../config/index.js'
 import { exec } from 'child_process'
+import { __dirname } from '../index.js'
 
 // Bot Channel
 let botRoom = bot.bot_room

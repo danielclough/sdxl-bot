@@ -1,6 +1,10 @@
 import { Client, GatewayIntentBits } from 'discord.js'
-import { __dirname } from './common/bot.js'
 import { bot } from './config/index.js'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+export const __dirname = path.dirname(__filename)
 
 // Minimal Discord privileges to listen to messages.
 const client = new Client({
