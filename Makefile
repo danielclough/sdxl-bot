@@ -2,7 +2,10 @@ help:
 	@echo "Make Commands: "
 
 up:
-	@sh -c "[ -n "$(docker image ls | grep sdxl-bot-sdxl)" ] && docker compose up -d" || lxc exec sdxl --user 1000 -- bash -c \"cd /sdxl && /home/ubuntu/.nvm/versions/node/v18.17.1/bin/node /sdxl/index.js\""
+	@sh -c "[ -z \"$(docker image ls | grep sdxl-bot-sdxl)\" ] && docker compose up -d || lxc exec sdxl --user 1000 -- bash -c \"cd /sdxl && /home/ubuntu/.nvm/versions/node/v18.17.1/bin/node /sdxl/index.js\""
+
+down:
+	@sh -c "[ -z \"$(docker image ls | grep sdxl-bot-sdxl)\" ] && docker compose down || lxc stop sdxl"
 
 clone:
 	@sudo apt update && sudo apt upgrade -y
