@@ -1,5 +1,5 @@
 help:
-	@echo "Make Commands: "
+	@echo "Make Commands:\n\nmake help\n\tThis menu\n\nmake up\n\tStart Docker or LXC\n\nmake down\n\tStop Docker or LXC\n\nmake clone\n\tClone Huggingface Repos\n\nmake nvidia-install\n\tInstall Nvidia\n\nmake lxc-build\n\tBuild Linux Container\n\nmake lxc-purge\n\tPurge LXD/LXD from system\n\nmake docker-install\n\tInstall Docker\n\nmake docker-nvidia-install\n\tInstall Nvidia Container Toolkit\n\nmake docker-build\n\tBuild Dockerfile and start container\n\nmake docker-purge\n\tPurge Docker From System\n\n"
 
 up:
 	@sh -c "[ -z \"$(docker image ls | grep sdxl-bot-sdxl)\" ] && docker compose up -d || lxc exec sdxl --user 1000 -- bash -c \"cd /sdxl && /home/ubuntu/.nvm/versions/node/v18.17.1/bin/node /sdxl/index.js\""
@@ -48,7 +48,7 @@ lxc-build:
 	@lxc exec sdxl --user 1000 -- bash -c "export HOME=/home/ubuntu && wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash"
 	@lxc exec sdxl --user 1000 -- bash -c ". /home/ubuntu/.nvm/nvm.sh  && nvm install 18 && nvm use 18"
 	@lxc exec sdxl --user 1000 -- bash -c ". /home/ubuntu/.nvm/nvm.sh && cd /sdxl && npm i"
-	@echo -e "\n\nExecute:\nlxc exec sdxl --user 1000 -- bash -c \"cd /sdxl && /home/ubuntu/.nvm/versions/node/v18.17.1/bin/node /sdxl/index.js\"\n"
+	@echo -e "\\nn\nExecute:\nlxc exec sdxl --user 1000 -- bash -c \"cd /sdxl && /home/ubuntu/.nvm/versions/node/v18.17.1/bin/node /sdxl/index.js\"\n"
 
 lxc-purge:
 	sudo snap remove --purge lxd
