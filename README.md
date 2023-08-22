@@ -2,6 +2,17 @@
 
 ## Prerequisites
 
+### GNU Make (optional)
+
+If you want to use `make`
+
+```sh
+sudo apt install -y make
+
+# Read Help
+make help
+```
+
 ### Cuda + Cuda Toolkit
 
 Cuda allows ML computation on Nvidia GPUs.
@@ -13,6 +24,8 @@ Cuda allows ML computation on Nvidia GPUs.
 <summary>Example Install on Ubuntu 22.04</summary>
 
 The following comes from from [this link](https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&Distribution=Ubuntu&target_version=22.04&target_type=deb_local).
+
+Same as `make nvidia-install` (other than md5 sum check)
 
 ```sh
 wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-ubuntu2204.pin
@@ -69,6 +82,8 @@ Check if Cuda Toolkit is installed:
 
 ##### Example Install
 
+Same as `make docker-install`
+
 ```sh
 sudo apt update && sudo apt upgrade -y && sudo apt install -y  \
     ca-certificates \
@@ -91,6 +106,8 @@ sudo usermod -aG docker $USER
 ```
 
 #### Nvidia Container Toolkit
+
+Same as `make docker-nvidia-install`
 
 ```sh
 distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
@@ -115,6 +132,8 @@ docker run --rm --runtime=nvidia --gpus all nvidia/cuda:12.2.0-base-ubuntu20.04 
 
 ## Clone Repos (local)
 
+Same as `make clone` (other than sdxl-bot repo clone)
+
 ```sh
 # Update/Upgrade system
 sudo apt update && sudo apt upgrade -y
@@ -127,7 +146,7 @@ GIT_HOME=$HOME/git
 
 cd $GIT_HOME
 
-# Clone Project Repo
+# Clone Project Repo (not included in make)
 git clone https://github.com/danielclough/sdxl-bot
 cd $GIT_HOME/sdxl-bot
 
@@ -169,6 +188,8 @@ Fill in the rest of the environment variables.
 <summary>LXC</summary>
 
 #### Setup
+
+Same as `make lxc-build`
 
 ```sh
 # Cuda-12.x and Toolkit must be installed on host!
@@ -234,6 +255,8 @@ exit
 lxc exec sdxl --user 1000 -- bash -c "cd /sdxl && /home/ubuntu/.nvm/versions/node/v18.17.1/bin/node /sdxl/index.js"
 ```
 
+Or, launch from `make up`
+
 </details>
 
 
@@ -245,46 +268,7 @@ lxc exec sdxl --user 1000 -- bash -c "cd /sdxl && /home/ubuntu/.nvm/versions/nod
 
 `docker-compose up`
 
-
-<details>
-
-<summary>Why is this image so F#king Big!?!</summary>
-
-In case you want to optimize more - here is some info to get you thinking about how to go about it.
-
-```sh
-# du -h --max-depth=1 / | grep G
-1.5G    /opt
-2.2G    /root
-9.8G    /usr
-14G     /
-```
-
-```sh
-# du -h --max-depth=1 /opt/nvidia/nsight-compute/ | grep G
-1.5G    /opt/nvidia/nsight-compute/2023.2.0
-1.5G    /opt/nvidia/nsight-compute/
-```
-
-```sh
-# du -h --max-depth=1 /root/.cache/pip | grep G
-2.2G    /root/.cache/pip/http
-2.2G    /root/.cache/pip
-```
-
-```sh
-# du -h --max-depth=1 /usr/local/ | grep G
-4.4G    /usr/local/lib
-4.4G    /usr/local/cuda-12.2
-8.9G    /usr/local/
-```
-
-```sh
-# du -h --max-depth=1 /usr/local/lib/ | grep G
-4.4G    /usr/local/lib/python3.11
-4.4G    /usr/local/lib/
-```
-</details>
+Or, launch from `make up`
 
 </details>
 
@@ -311,6 +295,8 @@ rsync -avh $GIT_HOME/sdxl-bot/images backupLocation:/some_dir/
 ### Purge Docker
 
 LXC and Docker don't play well together...
+
+Same as `make docker-purge`
 
 ```sh
 sudo apt -y purge `echo $(dpkg -l | grep -i docker | tr -s " " | cut -f 2 -d " " | xargs)
