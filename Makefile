@@ -34,17 +34,27 @@ clone:
 		&& git clone https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0 \
 		&& git clone https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0
 
-
 # Nvidia
 nvidia-install:
+ifeq ($(shell ls /usr/share/keyrings/ |grep cuda), cuda-4A4BF9B3-keyring.gpg)
+	@sudo apt-get update
+	@sudo apt-get -y install nvidia-cuda-toolkit
+	@sudo apt-get -y install cuda
+	@echo "Rebooting in 3 seconds, log in again and Cuda should be working!"
+	sleep 3
+	@sudo reboot -h now
+endif
+ifeq ($(shell ls /usr/share/keyrings/ |grep cuda),)
 	@sudo apt update && sudo apt upgrade -y && sudo apt install -y wget
 	@wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-ubuntu2204.pin
 	@sudo mv cuda-ubuntu2204.pin /etc/apt/preferences.d/cuda-repository-pin-600
 	@wget https://developer.download.nvidia.com/compute/cuda/12.2.1/local_installers/cuda-repo-ubuntu2204-12-2-local_12.2.1-535.86.10-1_amd64.deb
 	@sudo dpkg -i cuda-repo-ubuntu2204-12-2-local_12.2.1-535.86.10-1_amd64.deb
 	@sudo cp /var/cuda-repo-ubuntu2204-12-2-local/cuda-*-keyring.gpg /usr/share/keyrings/
-	@sudo apt-get update
-	@sudo apt-get -y install cuda
+	@echo "Rebooting in 3 seconds, log in again and run nvidia-install again to complete."
+	sleep 3
+	@sudo reboot -h now
+endif
 
 
 # LXC
