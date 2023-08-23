@@ -1,26 +1,43 @@
 help:
-	@echo "Make Commands:\n\nmake help\n\tThis menu\n\nmake up\n\tStart Docker or LXC\n\nmake down\n\tStop Docker or LXC\n\nmake clone\n\tClone Huggingface Repos\n\nmake nvidia-install\n\tInstall Nvidia\n\nmake lxc-build\n\tBuild Linux Container\n\nmake lxc-purge\n\tPurge LXD/LXD from system\n\nmake docker-install\n\tInstall Docker\n\nmake docker-nvidia-install\n\tInstall Nvidia Container Toolkit\n\nmake docker-build\n\tBuild Dockerfile and start container\n\nmake docker-purge\n\tPurge Docker From System\n\n"
+	@echo "Make Commands:"
+	@echo "make help\n\tThis menu"
+	@echo "make up\n\tStart Docker or LXC"
+	@echo "make down\n\tStop Docker or LXC"
+	@echo "make clone\n\tClone Huggingface Repos"
+	@echo "make nvidia-install\n\tInstall Nvidia"
+	@echo "make lxc-build\n\tBuild Linux Container"
+	@echo "make lxc-purge\n\tPurge LXD/LXD from system"
+	@echo "make docker-install\n\tInstall Docker"
+	@echo "make docker-nvidia-install\n\tInstall Nvidia Container Toolkit"
+	@echo "make docker-build\n\tBuild Dockerfile and start container"
+	@echo "make docker-purge\n\tPurge Docker From System"
 
 up:
-	@sh -c "[ -z \"$(docker image ls | grep sdxl-bot-sdxl)\" ] && docker compose up -d || lxc exec sdxl --user 1000 -- bash -c \"cd /sdxl && /home/ubuntu/.nvm/versions/node/v18.17.1/bin/node /sdxl/index.js\""
+	@sh -c "[ -z \"$$(docker image ls | grep sdxl-bot-sdxl)\" ] \
+		&& docker compose up -d \
+		|| lxc exec sdxl --user 1000 -- bash -c \"cd /sdxl && /home/ubuntu/.nvm/versions/node/v18.17.1/bin/node /sdxl/index.js\""
 
 down:
-	@sh -c "[ -z \"$(docker image ls | grep sdxl-bot-sdxl)\" ] && docker compose down || lxc stop sdxl"
+	@sh -c "[ -z \"$$(docker image ls | grep sdxl-bot-sdxl)\" ] \
+		&& docker compose down \
+		|| lxc stop sdxl"
 
 clone:
 	@sudo apt update && sudo apt upgrade -y
 	@sudo apt install -y git git-lfs
-	@GIT_HOME=$HOME/git \
-		&& cd $GIT_HOME/sdxl-bot \
-		&& mkdir $GIT_HOME/sdxl-bot/images \
-		&& mkdir $GIT_HOME/sdxl-bot/models/ && cd $GIT_HOME/sdxl-bot/models/ \
+	@read -p "Enter SDXL_HOME: (default: $$(pwd)): " SDXL_HOME \
+		&& SDXL_HOME=$${SDXL_HOME:-$$(pwd)} \
+		&& echo $$SDXL_HOME \
+		&& cd $$SDXL_HOME/sdxl-bot \
+		&& mkdir $$SDXL_HOME/sdxl-bot/images \
+		&& mkdir $$SDXL_HOME/sdxl-bot/models/ && cd $$SDXL_HOME/sdxl-bot/models/ \
 		&& git clone https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0 \
 		&& git clone https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0
 
 
 # Nvidia
 nvidia-install:
-	@sh -c "sudo apt update && sudo apt upgrade -y && sudo apt install -y wget"
+	@sudo apt update && sudo apt upgrade -y && sudo apt install -y wget
 	@wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-ubuntu2204.pin
 	@sudo mv cuda-ubuntu2204.pin /etc/apt/preferences.d/cuda-repository-pin-600
 	@wget https://developer.download.nvidia.com/compute/cuda/12.2.1/local_installers/cuda-repo-ubuntu2204-12-2-local_12.2.1-535.86.10-1_amd64.deb
@@ -36,11 +53,12 @@ lxc-build:
 		&& lxc config device add sdxl gpu gpu \
 		&& lxc config device set sdxl gpu uid 1000 \
 		&& lxc config device set sdxl gpu gid 1000
-	
-	@read -p "Enter GIT_HOME: " GIT_HOME \
+	@read -p "Enter SDXL_HOME: (default: $$(pwd)): " SDXL_HOME \
+		&& SDXL_HOME=$${SDXL_HOME:-$$(pwd)} \
+		&& echo $$SDXL_HOME \
 		&& lxc config device add sdxl disk disk \
-    		path=/sdxl source=$$GIT_HOME/sdxl-bot \
-		&& sudo chown 1001000:1000 -R $$GIT_HOME/sdxl-bot
+    		path=/sdxl source=$$SDXL_HOME/sdxl-bot \
+		&& sudo chown 1001000:1000 -R $$SDXL_HOME/sdxl-bot
 	@lxc exec sdxl --user 1000 -- bash -c "sudo apt update && sudo apt upgrade -y"
 	@lxc exec sdxl --user 1000 -- bash -c "sudo apt install -y python3 python3-pip python-is-python3"
 	@lxc exec sdxl --user 1000 -- bash -c "pip install diffusers torch transformers accelerate"
@@ -51,7 +69,7 @@ lxc-build:
 	@echo -e "\\nn\nExecute:\nlxc exec sdxl --user 1000 -- bash -c \"cd /sdxl && /home/ubuntu/.nvm/versions/node/v18.17.1/bin/node /sdxl/index.js\"\n"
 
 lxc-purge:
-	sudo snap remove --purge lxd
+	@sudo snap remove --purge lxd
 
 # DOCKER
 docker-install:
@@ -77,7 +95,7 @@ docker-build:
 	@docker compose up --build
 
 docker-purge:
-	@bash -c "sudo apt -y purge `echo $$(dpkg -l | grep -i docker | tr -s " " | cut -f 2 -d " " | xargs)`"
+	@sh -c "sudo apt -y purge `echo $$(dpkg -l | grep -i docker | tr -s " " | cut -f 2 -d " " | xargs)`"
 	@sudo apt -y autoremove
 	@sudo rm -fr /etc/docker
 	@sudo systemctl stop docker
