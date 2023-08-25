@@ -28,9 +28,9 @@ clone:
 	@read -p "Enter SDXL_HOME: (default: $$(pwd)): " SDXL_HOME \
 		&& SDXL_HOME=$${SDXL_HOME:-$$(pwd)} \
 		&& echo $$SDXL_HOME \
-		&& cd $$SDXL_HOME/sdxl-bot \
-		&& mkdir $$SDXL_HOME/sdxl-bot/images \
-		&& mkdir $$SDXL_HOME/sdxl-bot/models/ && cd $$SDXL_HOME/sdxl-bot/models/ \
+		&& cd $$SDXL_HOME \
+		&& mkdir $$SDXL_HOME/images \
+		&& mkdir $$SDXL_HOME/models/ && cd $$SDXL_HOME/models/ \
 		&& git clone https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0 \
 		&& git clone https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0
 
@@ -67,8 +67,8 @@ lxc-build:
 		&& SDXL_HOME=$${SDXL_HOME:-$$(pwd)} \
 		&& echo $$SDXL_HOME \
 		&& lxc config device add sdxl disk disk \
-    		path=/sdxl source=$$SDXL_HOME/sdxl-bot \
-		&& sudo chown 1001000:1000 -R $$SDXL_HOME/sdxl-bot
+    		path=/sdxl source=$$SDXL_HOME \
+		&& sudo chown 1001000:1000 -R $$SDXL_HOME
 	@lxc exec sdxl --user 1000 -- bash -c "sudo apt update && sudo apt upgrade -y"
 	@lxc exec sdxl --user 1000 -- bash -c "sudo apt install -y python3 python3-pip python-is-python3"
 	@lxc exec sdxl --user 1000 -- bash -c "pip install diffusers torch transformers accelerate"
